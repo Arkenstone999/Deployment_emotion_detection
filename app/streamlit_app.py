@@ -98,6 +98,9 @@ webrtc_streamer(key="emotion", mode=WebRtcMode.SENDRECV,
                media_stream_constraints={"video": True, "audio": False})
 
 st.header("Emotion Distribution")
+if st.button("Reset Counts"):
+    for key in st.session_state.emotion_counts:
+        st.session_state.emotion_counts[key] = 0
 counts = st.session_state.emotion_counts
 source = pd.DataFrame({"emotion": list(counts.keys()), "count": list(counts.values())})
 chart = alt.Chart(source).mark_bar().encode(x="emotion", y="count", color="emotion")
