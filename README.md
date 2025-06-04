@@ -26,3 +26,6 @@ To start the Streamlit server and run the application:
 ```bash
 streamlit run app/streamlit_app.py
 ```
+
+The UI lets you **upload a video file**. The application processes the video with `alexnet_full_model.pth` and shows the engagement distribution as a bar chart.
+
