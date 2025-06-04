@@ -1,8 +1,10 @@
 streamlit
 streamlit-webrtc
 opencv-python
-deepface
 altair
 pandas
 numpy
 av
+torch
+torchvision
+
