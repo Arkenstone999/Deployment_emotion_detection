@@ -8,12 +8,16 @@ from torchvision import transforms
 import cv2
 from pathlib import Path
 
-# Emotion labels (update to match your model)
-EMOTIONS = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
+# Engagement labels produced by the model
+ENGAGEMENT_TYPES = [
+    'not engaged',
+    'engaged-positive',
+    'engaged-negative',
+]
 
 # Store emotion counts
 if 'emotion_counts' not in st.session_state:
-    st.session_state.emotion_counts = {emotion: 0 for emotion in EMOTIONS}
+    st.session_state.emotion_counts = {e: 0 for e in ENGAGEMENT_TYPES}
 
 @st.cache_resource
 def load_model() -> torch.nn.Module:
@@ -43,10 +47,20 @@ class EmotionProcessor(VideoProcessorBase):
         with torch.no_grad():
             outputs = self.model(tensor)
             _, pred = torch.max(outputs, 1)
-            emotion = EMOTIONS[pred.item()]
-            if emotion in st.session_state.emotion_counts:
-                st.session_state.emotion_counts[emotion] += 1
-        return frame
+            engagement = ENGAGEMENT_TYPES[pred.item()]
+            if engagement in st.session_state.emotion_counts:
+                st.session_state.emotion_counts[engagement] += 1
+        cv2.putText(
+            img,
+            engagement,
+            (10, 30),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 255, 0),
+            2,
+            cv2.LINE_AA,
+        )
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 st.title("Real-time Emotion Detection")
 
