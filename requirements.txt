@@ -1,0 +1,9 @@
+streamlit
+streamlit-webrtc
+opencv-python
+altair
+pandas
+numpy
+av
+torch
+torchvision
