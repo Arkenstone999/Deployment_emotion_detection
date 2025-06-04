@@ -1,11 +1,13 @@
 import streamlit as st
 import torch
 from torchvision import transforms
+import torchvision
 import cv2
 from pathlib import Path
 import pandas as pd
 import altair as alt
 import tempfile
+import pickle
 
 
 ENGAGEMENT_TYPES = ["not engaged", "engaged-positive", "engaged-negative"]
@@ -17,7 +19,15 @@ def load_model() -> torch.nn.Module:
     if not model_path.exists():
         st.error(f"Model file not found at {model_path}. Please add it and restart.")
         st.stop()
-    model = torch.load(model_path, map_location=torch.device("cpu"))
+    try:
+        model = torch.load(model_path, map_location=torch.device("cpu"))
+    except pickle.UnpicklingError:
+        torch.serialization.add_safe_globals([torchvision.models.alexnet.AlexNet])
+        model = torch.load(
+            model_path,
+            map_location=torch.device("cpu"),
+            weights_only=False,
+        )
     model.eval()
     return model
 
